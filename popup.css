@@ -831,3 +831,47 @@ body {
   display: flex;
   align-items: center;
 }
+
+/* Card Pinning */
+.card.pinned {
+  border-color: rgba(245, 158, 11, 0.25);
+  background: linear-gradient(90deg, rgba(245, 158, 11, 0.03) 0%, var(--bg-card) 100%);
+}
+
+.card.pinned:hover {
+  background: linear-gradient(90deg, rgba(245, 158, 11, 0.05) 0%, var(--bg-card-hover) 100%);
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+.card-pinned-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  color: #f59e0b;
+  opacity: 0.65;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+}
+
+.card-pinned-badge svg {
+  width: 10px;
+  height: 10px;
+}
+
+.card:hover .card-pinned-badge {
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.btn-card-action.btn-pin.active {
+  color: #f59e0b;
+  border-color: rgba(245, 158, 11, 0.3);
+  background: rgba(245, 158, 11, 0.08);
+}
+
+.btn-card-action.btn-pin.active:hover {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+}
+

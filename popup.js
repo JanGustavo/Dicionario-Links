@@ -16,6 +16,7 @@ const SVG_ICONS = {
 const SVG_EDIT = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
 const SVG_TRASH = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>`;
 const SVG_CHECK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+const SVG_PIN = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.89A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.89a2 2 0 0 1-1.11-1.79V4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2z"/></svg>`;
 
 // Storage abstraction (with localStorage fallback for browser testing)
 const storage = {
@@ -215,6 +216,12 @@ function render() {
     entry.value.toLowerCase().includes(query)
   );
 
+  filtered.sort((a, b) => {
+    const aPinned = a.pinned ? 1 : 0;
+    const bPinned = b.pinned ? 1 : 0;
+    return bPinned - aPinned;
+  });
+
   if (entries.length === 0) {
     emptyState.style.display = 'flex';
     noResults.style.display = 'none';
@@ -233,7 +240,7 @@ function render() {
   
   filtered.forEach(entry => {
     const card = document.createElement('div');
-    card.className = 'card';
+    card.className = `card${entry.pinned ? ' pinned' : ''}`;
     card.style.setProperty('--accent-color', entry.color || '#6c63ff');
     card.setAttribute('data-id', entry.id);
     
@@ -249,6 +256,7 @@ function render() {
     }
     
     card.innerHTML = `
+      ${entry.pinned ? `<div class="card-pinned-badge" title="Fixado no topo">${SVG_PIN}</div>` : ''}
       <div class="card-icon-wrapper" title="Clique para copiar">
         <div class="card-icon">${iconHtml}</div>
       </div>
@@ -260,6 +268,9 @@ function render() {
         </div>
       </div>
       <div class="card-actions">
+        <button class="btn-card-action btn-pin${entry.pinned ? ' active' : ''}" title="${entry.pinned ? 'Desafixar do topo' : 'Fixar no topo'}">
+          ${SVG_PIN}
+        </button>
         <button class="btn-card-action btn-edit" title="Editar">
           ${SVG_EDIT}
         </button>
@@ -272,8 +283,15 @@ function render() {
     // Event listeners
     const iconWrap = card.querySelector('.card-icon-wrapper');
     const contentWrap = card.querySelector('.card-content');
+    const pinBtn = card.querySelector('.btn-pin');
     const editBtn = card.querySelector('.btn-edit');
     const deleteBtn = card.querySelector('.btn-delete');
+    
+    // Pin/unpin entry
+    pinBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      togglePin(entry.id);
+    });
     
     // Clicking on icon directly COPIES value
     iconWrap.addEventListener('click', (e) => {
@@ -359,6 +377,18 @@ function deleteEntry(id) {
   storage.set('entries', entries, () => {
     render();
     showToast('Entrada removida');
+  });
+}
+
+function togglePin(id) {
+  entries = entries.map(entry => {
+    if (entry.id === id) {
+      return { ...entry, pinned: !entry.pinned };
+    }
+    return entry;
+  });
+  storage.set('entries', entries, () => {
+    render();
   });
 }
 
