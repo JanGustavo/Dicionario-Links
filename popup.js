@@ -248,10 +248,11 @@ function render() {
   
   noResults.style.display = 'none';
   
-  filtered.forEach(entry => {
+  filtered.forEach((entry, index) => {
     const card = document.createElement('div');
     card.className = `card${entry.pinned ? ' pinned' : ''}`;
     card.style.setProperty('--accent-color', entry.color || '#6c63ff');
+    card.style.animationDelay = `${index * 0.03}s`;
     card.setAttribute('data-id', entry.id);
     
     let iconHtml = '';

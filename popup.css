@@ -191,6 +191,7 @@ body {
   cursor: pointer;
   transition: var(--transition);
   overflow: hidden;
+  animation: cardFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .card::before {
@@ -209,7 +210,7 @@ body {
   background: var(--bg-card-hover);
   border-color: var(--border-color-hover);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 0 10px rgba(var(--accent-color), 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 0 10px color-mix(in srgb, var(--accent-color) 8%, transparent);
 }
 
 /* Card Icon (Photo/Logo Wrapper) */
@@ -983,6 +984,17 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 
