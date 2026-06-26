@@ -106,6 +106,7 @@ const DEFAULT_ENTRIES = [
 // App State
 let entries = [];
 let selectedIcon = { type: 'preset', value: 'link' };
+let selectedTag = 'all';
 let editingId = null;
 let clickTimer = null;
 const CLICK_DELAY = 250;
@@ -129,6 +130,7 @@ const btnSave = document.getElementById('btnSave');
 const fieldName = document.getElementById('fieldName');
 const fieldValue = document.getElementById('fieldValue');
 const fieldUrl = document.getElementById('fieldUrl');
+const fieldTag = document.getElementById('fieldTag');
 const fieldColor = document.getElementById('fieldColor');
 
 const iconPreviewBtn = document.getElementById('iconPreviewBtn');
@@ -211,10 +213,12 @@ function render() {
   const query = searchInput.value.toLowerCase().trim();
   cardsList.innerHTML = '';
   
-  const filtered = entries.filter(entry => 
-    entry.name.toLowerCase().includes(query) || 
-    entry.value.toLowerCase().includes(query)
-  );
+  const filtered = entries.filter(entry => {
+    const queryMatch = entry.name.toLowerCase().includes(query) || 
+                       entry.value.toLowerCase().includes(query);
+    const tagMatch = selectedTag === 'all' || (entry.tag && entry.tag.trim() === selectedTag);
+    return queryMatch && tagMatch;
+  });
 
   filtered.sort((a, b) => {
     const aPinned = a.pinned ? 1 : 0;
@@ -261,7 +265,7 @@ function render() {
         <div class="card-icon">${iconHtml}</div>
       </div>
       <div class="card-content" title="1 clique copia, 2 cliques abrem link">
-        <div class="card-name">${entry.name}</div>
+        <div class="card-name">${entry.name}${entry.tag ? `<span class="card-tag">${entry.tag}</span>` : ''}</div>
         <div class="card-value-wrapper">
           <span class="card-value">${entry.value}</span>
           <span class="copy-badge">Copiado</span>
@@ -375,6 +379,7 @@ function triggerCopyVisual(cardElement, value, name) {
 function deleteEntry(id) {
   entries = entries.filter(e => e.id !== id);
   storage.set('entries', entries, () => {
+    renderTagsFilter();
     render();
     showToast('Entrada removida');
   });
@@ -388,7 +393,51 @@ function togglePin(id) {
     return entry;
   });
   storage.set('entries', entries, () => {
+    renderTagsFilter();
     render();
+  });
+}
+
+function renderTagsFilter() {
+  const tagsFilterWrap = document.getElementById('tagsFilterWrap');
+  if (!tagsFilterWrap) return;
+  
+  const tags = new Set();
+  entries.forEach(entry => {
+    if (entry.tag && entry.tag.trim()) {
+      tags.add(entry.tag.trim());
+    }
+  });
+  
+  if (tags.size === 0) {
+    tagsFilterWrap.style.display = 'none';
+    selectedTag = 'all';
+    return;
+  }
+  
+  tagsFilterWrap.style.display = 'flex';
+  tagsFilterWrap.innerHTML = '';
+  
+  const allPill = document.createElement('button');
+  allPill.className = `tag-pill${selectedTag === 'all' ? ' active' : ''}`;
+  allPill.innerText = 'Tudo';
+  allPill.addEventListener('click', () => {
+    selectedTag = 'all';
+    renderTagsFilter();
+    render();
+  });
+  tagsFilterWrap.appendChild(allPill);
+  
+  tags.forEach(tag => {
+    const pill = document.createElement('button');
+    pill.className = `tag-pill${selectedTag === tag ? ' active' : ''}`;
+    pill.innerText = tag;
+    pill.addEventListener('click', () => {
+      selectedTag = selectedTag === tag ? 'all' : tag;
+      renderTagsFilter();
+      render();
+    });
+    tagsFilterWrap.appendChild(pill);
   });
 }
 
@@ -441,6 +490,7 @@ function openModal(id = null) {
       fieldName.value = entry.name;
       fieldValue.value = entry.value;
       fieldUrl.value = entry.url || '';
+      fieldTag.value = entry.tag || '';
       fieldColor.value = entry.color || '#6c63ff';
       selectedIcon = { ...entry.icon };
       emojiInput.value = selectedIcon.type === 'emoji' ? selectedIcon.value : '';
@@ -451,6 +501,7 @@ function openModal(id = null) {
     fieldName.value = '';
     fieldValue.value = '';
     fieldUrl.value = '';
+    fieldTag.value = '';
     fieldColor.value = '#6c63ff';
     selectedIcon = { type: 'preset', value: 'link' };
     emojiInput.value = '';
@@ -498,6 +549,7 @@ function saveEntry() {
   const name = fieldName.value.trim();
   const value = fieldValue.value.trim();
   const url = fieldUrl.value.trim();
+  const tag = fieldTag.value.trim();
   const color = fieldColor.value;
   
   if (!name || !value) {
@@ -511,7 +563,7 @@ function saveEntry() {
     // Edit existing
     entries = entries.map(entry => {
       if (entry.id === editingId) {
-        return { ...entry, name, value, url, color, icon: iconData };
+        return { ...entry, name, value, url, tag, color, icon: iconData };
       }
       return entry;
     });
@@ -522,14 +574,17 @@ function saveEntry() {
       name,
       value,
       url,
+      tag,
       color,
-      icon: iconData
+      icon: iconData,
+      pinned: false
     };
     entries.push(newEntry);
   }
   
   storage.set('entries', entries, () => {
     closeModal();
+    renderTagsFilter();
     render();
     showToast(editingId ? 'Entrada atualizada' : 'Nova entrada adicionada');
   });
@@ -547,6 +602,7 @@ function init() {
       entries = [...DEFAULT_ENTRIES];
       storage.set('entries', entries);
     }
+    renderTagsFilter();
     render();
   });
   
@@ -640,7 +696,7 @@ function init() {
   });
   
   // Prevent form submission on Enter
-  const inputs = [fieldName, fieldValue, fieldUrl];
+  const inputs = [fieldName, fieldValue, fieldUrl, fieldTag];
   inputs.forEach(input => {
     input.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {

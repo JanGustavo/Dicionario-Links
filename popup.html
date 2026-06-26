@@ -30,6 +30,7 @@
         </svg>
         <input type="text" id="search" placeholder="Buscar entradas…" class="search-input" autocomplete="off">
       </div>
+      <div class="tags-filter-wrap" id="tagsFilterWrap" style="display: none;"></div>
     </header>
 
     <!-- Cards list -->
@@ -113,6 +114,11 @@
             <span class="optional">— opcional, abre no duplo clique</span>
           </label>
           <input type="url" id="fieldUrl" class="field-input" placeholder="https://…" autocomplete="off">
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="fieldTag">Categoria / Tag</label>
+          <input type="text" id="fieldTag" class="field-input" placeholder="ex: Trabalho, Pessoal, Dev…" autocomplete="off" maxlength="15">
         </div>
 
         <div class="field field-row">

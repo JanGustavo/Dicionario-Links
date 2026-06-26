@@ -875,3 +875,57 @@ body {
   color: #f59e0b;
 }
 
+/* Tags Filter and Badges */
+.tags-filter-wrap {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 8px 0 2px 0;
+  margin-top: 4px;
+}
+
+.tags-filter-wrap::-webkit-scrollbar {
+  display: none;
+}
+
+.tag-pill {
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: var(--transition);
+}
+
+.tag-pill:hover {
+  border-color: var(--border-color-hover);
+  color: var(--text-primary);
+}
+
+.tag-pill.active {
+  background: var(--accent-default);
+  border-color: var(--accent-default);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(108, 99, 255, 0.2);
+}
+
+.card-tag {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 8.5px;
+  padding: 1px 6px;
+  border-radius: 8px;
+  margin-left: 8px;
+  text-transform: none;
+  font-weight: 500;
+  letter-spacing: 0;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+
