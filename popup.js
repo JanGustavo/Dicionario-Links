@@ -127,6 +127,12 @@ const btnClose = document.getElementById('btnClose');
 const btnCancel = document.getElementById('btnCancel');
 const btnSave = document.getElementById('btnSave');
 
+const settingsModalOverlay = document.getElementById('settingsModalOverlay');
+const btnSettings = document.getElementById('btnSettings');
+const btnSettingsClose = document.getElementById('btnSettingsClose');
+const btnExport = document.getElementById('btnExport');
+const importFile = document.getElementById('importFile');
+
 const fieldName = document.getElementById('fieldName');
 const fieldValue = document.getElementById('fieldValue');
 const fieldUrl = document.getElementById('fieldUrl');
@@ -441,6 +447,60 @@ function renderTagsFilter() {
   });
 }
 
+function openSettingsModal() {
+  settingsModalOverlay.classList.add('active');
+}
+
+function closeSettingsModal() {
+  settingsModalOverlay.classList.remove('active');
+}
+
+function exportData() {
+  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(entries, null, 2));
+  const downloadAnchor = document.createElement('a');
+  downloadAnchor.setAttribute("href", dataStr);
+  downloadAnchor.setAttribute("download", "infovault-backup.json");
+  document.body.appendChild(downloadAnchor);
+  downloadAnchor.click();
+  downloadAnchor.remove();
+  showToast("Backup exportado!");
+}
+
+function importData(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = function(evt) {
+    try {
+      const importedEntries = JSON.parse(evt.target.result);
+      if (!Array.isArray(importedEntries)) {
+        throw new Error("Backup deve ser uma lista de entradas.");
+      }
+      
+      const isValid = importedEntries.every(item => 
+        item && typeof item === 'object' && item.id && item.name && item.value && item.color && item.icon
+      );
+      
+      if (!isValid) {
+        throw new Error("Formato inválido em algumas entradas.");
+      }
+      
+      entries = importedEntries;
+      storage.set('entries', entries, () => {
+        closeSettingsModal();
+        renderTagsFilter();
+        render();
+        showToast("Backup importado com sucesso!");
+      });
+    } catch (err) {
+      showToast(err.message || "Erro ao ler backup", false);
+    }
+  };
+  reader.readAsText(file);
+  importFile.value = '';
+}
+
 // Preset Picker Construction
 function initPresetGrid() {
   presetGrid.innerHTML = '';
@@ -619,6 +679,16 @@ function init() {
   modalOverlay.addEventListener('click', (e) => {
     if (e.target === modalOverlay) closeModal();
   });
+  
+  // Settings Modal Events
+  btnSettings.addEventListener('click', openSettingsModal);
+  btnSettingsClose.addEventListener('click', closeSettingsModal);
+  settingsModalOverlay.addEventListener('click', (e) => {
+    if (e.target === settingsModalOverlay) closeSettingsModal();
+  });
+  
+  btnExport.addEventListener('click', exportData);
+  importFile.addEventListener('change', importData);
   
   // Save Entry
   btnSave.addEventListener('click', saveEntry);
