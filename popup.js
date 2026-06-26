@@ -330,7 +330,7 @@ function render() {
     });
     
     // Confirmação de exclusão em dois cliques para segurança
-    deleteBtn.addEventListener('click', (e) =>>,StartLine:294,TargetContent: {
+    deleteBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       
       const id = entry.id;
