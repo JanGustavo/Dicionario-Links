@@ -43,7 +43,6 @@ const storage = {
 
 const openUrl = (url) => {
   if (!url) return;
-  // Ensure protocol is present
   let targetUrl = url.trim();
   if (!/^https?:\/\//i.test(targetUrl)) {
     targetUrl = 'https://' + targetUrl;
@@ -53,6 +52,25 @@ const openUrl = (url) => {
     chrome.tabs.create({ url: targetUrl });
   } else {
     window.open(targetUrl, '_blank');
+  }
+};
+
+const getDomain = (url) => {
+  if (!url) return null;
+  let targetUrl = url.trim();
+  if (!targetUrl) return null;
+  if (!/^https?:\/\//i.test(targetUrl)) {
+    targetUrl = 'http://' + targetUrl;
+  }
+  try {
+    const parsed = new URL(targetUrl);
+    const host = parsed.hostname;
+    if (host && host.includes('.') && host.length > 3) {
+      return host;
+    }
+    return null;
+  } catch (e) {
+    return null;
   }
 };
 
@@ -219,7 +237,6 @@ function render() {
     card.style.setProperty('--accent-color', entry.color || '#6c63ff');
     card.setAttribute('data-id', entry.id);
     
-    // Icon generation
     let iconHtml = '';
     if (entry.icon.type === 'preset') {
       iconHtml = SVG_ICONS[entry.icon.value] || SVG_ICONS['link'];
@@ -227,6 +244,8 @@ function render() {
       iconHtml = `<span>${entry.icon.value}</span>`;
     } else if (entry.icon.type === 'image') {
       iconHtml = `<img src="${entry.icon.value}" alt="">`;
+    } else if (entry.icon.type === 'favicon') {
+      iconHtml = `<img src="https://www.google.com/s2/favicons?sz=64&domain=${entry.icon.value}" alt="">`;
     }
     
     card.innerHTML = `
@@ -367,7 +386,6 @@ function initPresetGrid() {
   });
 }
 
-// Update Preview Button
 function updatePreview() {
   if (selectedIcon.type === 'preset') {
     iconPreview.innerHTML = SVG_ICONS[selectedIcon.value] || SVG_ICONS['link'];
@@ -375,6 +393,8 @@ function updatePreview() {
     iconPreview.innerHTML = `<span>${selectedIcon.value}</span>`;
   } else if (selectedIcon.type === 'image') {
     iconPreview.innerHTML = `<img src="${selectedIcon.value}">`;
+  } else if (selectedIcon.type === 'favicon') {
+    iconPreview.innerHTML = `<img src="https://www.google.com/s2/favicons?sz=64&domain=${selectedIcon.value}">`;
   }
 }
 
@@ -559,7 +579,6 @@ function init() {
     }
   });
   
-  // Color Picker & preset dots
   fieldColor.addEventListener('input', updateColorDotSelection);
   
   colorDots.forEach(dot => {
@@ -568,6 +587,26 @@ function init() {
       fieldColor.value = color;
       updateColorDotSelection();
     });
+  });
+
+  // Auto-favicon detection when user types a URL
+  fieldUrl.addEventListener('input', () => {
+    const urlVal = fieldUrl.value.trim();
+    const domain = getDomain(urlVal);
+    
+    if (selectedIcon.type === 'preset' && selectedIcon.value === 'link' && domain) {
+      selectedIcon = { type: 'favicon', value: domain };
+      updatePreview();
+    } else if (selectedIcon.type === 'favicon') {
+      if (domain) {
+        selectedIcon.value = domain;
+      } else {
+        selectedIcon = { type: 'preset', value: 'link' };
+        const defaultPreset = document.querySelector('.preset-btn[data-preset="link"]');
+        if (defaultPreset) defaultPreset.classList.add('active');
+      }
+      updatePreview();
+    }
   });
   
   // Prevent form submission on Enter
