@@ -8,7 +8,7 @@
 <body>
   <div class="app">
 
-    <!-- Header -->
+    <!-- Cabeçalho -->
     <header class="header">
       <div class="header-top">
         <div class="logo">
@@ -41,10 +41,10 @@
       <div class="tags-filter-wrap" id="tagsFilterWrap" style="display: none;"></div>
     </header>
 
-    <!-- Cards list -->
+    <!-- Lista de cards -->
     <main class="cards-list" id="cardsList"></main>
 
-    <!-- Empty state -->
+    <!-- Estado vazio (sem nenhum item cadastrado) -->
     <div class="empty-state" id="emptyState">
       <div class="empty-icon">
         <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
@@ -59,14 +59,14 @@
       <button class="btn-empty-cta" id="btnAddEmpty">Adicionar primeira entrada</button>
     </div>
 
-    <!-- No results state -->
+    <!-- Sem resultados para a busca -->
     <div class="no-results" id="noResults" style="display:none">
       <p>Nenhum resultado para "<span id="searchTerm"></span>"</p>
     </div>
 
   </div>
 
-  <!-- Modal overlay -->
+  <!-- Modal de Criar/Editar Entrada -->
   <div class="modal-overlay" id="modalOverlay">
     <div class="modal">
 
@@ -81,7 +81,7 @@
 
       <div class="modal-body">
 
-        <!-- Icon picker -->
+        <!-- Seletor de Ícones -->
         <div class="field">
           <label class="field-label">Ícone</label>
           <div class="icon-picker-wrap">

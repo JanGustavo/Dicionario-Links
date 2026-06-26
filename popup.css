@@ -25,7 +25,7 @@
   --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Base resets & Layout */
+/* Resets base e Layout */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -43,7 +43,7 @@ body {
   user-select: none;
 }
 
-/* App container */
+/* Container do App */
 .app {
   display: flex;
   flex-direction: column;
@@ -53,7 +53,7 @@ body {
   position: relative;
 }
 
-/* Header */
+/* Cabeçalho */
 .header {
   position: sticky;
   top: 0;
@@ -112,7 +112,7 @@ body {
   transform: translateY(1px);
 }
 
-/* Search input */
+/* Campo de busca */
 .search-wrap {
   position: relative;
   display: flex;
@@ -150,7 +150,7 @@ body {
   color: var(--accent-default);
 }
 
-/* Main Cards List */
+/* Lista de Cards */
 .cards-list {
   flex: 1;
   overflow-y: auto;
@@ -160,7 +160,7 @@ body {
   gap: 10px;
 }
 
-/* Custom scrollbar */
+/* Scrollbar personalizada */
 .cards-list::-webkit-scrollbar {
   width: 6px;
 }
@@ -178,7 +178,7 @@ body {
   background: var(--border-color-hover);
 }
 
-/* Individual Card (Item) */
+/* Card individual */
 .card {
   --accent-color: var(--accent-default);
   display: flex;
@@ -213,7 +213,7 @@ body {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 0 10px color-mix(in srgb, var(--accent-color) 8%, transparent);
 }
 
-/* Card Icon (Photo/Logo Wrapper) */
+/* Ícone do Card */
 .card-icon-wrapper {
   display: flex;
   align-items: center;
@@ -257,7 +257,7 @@ body {
   color: var(--accent-color);
 }
 
-/* Card Content text */
+/* Texto e conteúdo do Card */
 .card-content {
   flex: 1;
   min-width: 0; /* allows text truncation */
@@ -309,7 +309,7 @@ body {
   transform: scale(1) translateY(0);
 }
 
-/* Card Actions (Hover-only) */
+/* Ações do Card (visíveis no hover) */
 .card-actions {
   display: flex;
   gap: 6px;
@@ -354,7 +354,7 @@ body {
   height: 12px;
 }
 
-/* Empty State & No Results */
+/* Estados vazio e sem resultados */
 .empty-state {
   display: flex;
   flex-direction: column;
@@ -413,7 +413,7 @@ body {
   font-size: 13px;
 }
 
-/* Modal Styling */
+/* Estilização dos Modais */
 .modal-overlay {
   position: absolute;
   top: 0;
@@ -538,7 +538,7 @@ body {
   box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.15);
 }
 
-/* Icon Picker inside Modal */
+/* Seletor de Ícones no Modal */
 .icon-picker-wrap {
   display: flex;
   gap: 12px;
@@ -691,7 +691,7 @@ body {
   border-color: var(--text-muted);
 }
 
-/* Color selector */
+/* Seletor de Cores */
 .color-row {
   display: flex;
   align-items: center;
@@ -747,7 +747,7 @@ body {
   box-shadow: 0 0 6px rgba(255, 255, 255, 0.2);
 }
 
-/* Modal Footer Actions */
+/* Ações de rodapé do Modal */
 .modal-footer {
   display: flex;
   justify-content: flex-end;
@@ -799,7 +799,7 @@ body {
   transform: translateY(1px);
 }
 
-/* Toast */
+/* Notificação Toast */
 .toast {
   position: absolute;
   bottom: 20px;

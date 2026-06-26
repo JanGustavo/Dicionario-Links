@@ -1,4 +1,3 @@
-// SVG Presets & Icons
 const SVG_ICONS = {
   linkedin: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>`,
   github: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.07 2.91.83.1-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z"/></svg>`,
@@ -18,7 +17,7 @@ const SVG_TRASH = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" st
 const SVG_CHECK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
 const SVG_PIN = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.89A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.89a2 2 0 0 1-1.11-1.79V4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2z"/></svg>`;
 
-// Storage abstraction (with localStorage fallback for browser testing)
+// Abstração de armazenamento (com fallback para localStorage ao rodar localmente no navegador)
 const storage = {
   get: (key, callback) => {
     if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
@@ -75,12 +74,12 @@ const getDomain = (url) => {
   }
 };
 
-// Default Sample Data
+// Dados iniciais padrão
 const DEFAULT_ENTRIES = [
   {
     id: "d1",
     name: "LinkedIn",
-    value: "linkedin.com/in/usuario",
+    value: "linkedin.com/in/seu-usuario",
     url: "https://linkedin.com",
     color: "#0A66C2",
     icon: { type: "preset", value: "linkedin" }
@@ -88,7 +87,7 @@ const DEFAULT_ENTRIES = [
   {
     id: "d2",
     name: "GitHub",
-    value: "github.com/usuario",
+    value: "github.com/seu-usuario",
     url: "https://github.com",
     color: "#2ea44f",
     icon: { type: "preset", value: "github" }
@@ -103,7 +102,7 @@ const DEFAULT_ENTRIES = [
   }
 ];
 
-// App State
+// Estado global do aplicativo
 let entries = [];
 let selectedIcon = { type: 'preset', value: 'link' };
 let selectedTag = 'all';
@@ -112,7 +111,7 @@ let clickTimer = null;
 const CLICK_DELAY = 250;
 let deleteTimeouts = {};
 
-// DOM Elements
+// Elementos da interface (DOM)
 const cardsList = document.getElementById('cardsList');
 const emptyState = document.getElementById('emptyState');
 const noResults = document.getElementById('noResults');
@@ -148,7 +147,7 @@ const imageUpload = document.getElementById('imageUpload');
 const colorDots = document.querySelectorAll('.color-dot');
 const toast = document.getElementById('toast');
 
-// Image Compressor (fits in base64 without storage bloat)
+// Reduz o tamanho da imagem carregada para caber em base64 sem estourar o limite de armazenamento
 function compressImage(file, callback) {
   const reader = new FileReader();
   reader.onload = function(e) {
@@ -184,7 +183,7 @@ function compressImage(file, callback) {
   reader.readAsDataURL(file);
 }
 
-// Show Toast feedback
+// Exibe notificação temporária na tela (Toast)
 function showToast(message, isSuccess = true) {
   const successIcon = `<span class="toast-success-icon">${SVG_CHECK}</span>`;
   toast.innerHTML = (isSuccess ? successIcon : '') + message;
@@ -195,7 +194,7 @@ function showToast(message, isSuccess = true) {
   }, 2000);
 }
 
-// Copy to Clipboard Action
+// Copia o valor para a área de transferência
 function copyValue(value, label) {
   navigator.clipboard.writeText(value)
     .then(() => {
@@ -203,7 +202,7 @@ function copyValue(value, label) {
     })
     .catch(err => {
       console.error('Falha ao copiar:', err);
-      // Fallback copy logic
+      // Fallback para navegadores antigos ou sem permissões de clipboard
       const el = document.createElement('textarea');
       el.value = value;
       document.body.appendChild(el);
@@ -214,7 +213,7 @@ function copyValue(value, label) {
     });
 }
 
-// Render entries to popup list
+// Renderiza a lista de cards na tela
 function render() {
   const query = searchInput.value.toLowerCase().trim();
   cardsList.innerHTML = '';
@@ -290,27 +289,23 @@ function render() {
         </button>
       </div>
     `;
-    
-    // Event listeners
-    const iconWrap = card.querySelector('.card-icon-wrapper');
+        const iconWrap = card.querySelector('.card-icon-wrapper');
     const contentWrap = card.querySelector('.card-content');
     const pinBtn = card.querySelector('.btn-pin');
     const editBtn = card.querySelector('.btn-edit');
     const deleteBtn = card.querySelector('.btn-delete');
     
-    // Pin/unpin entry
     pinBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       togglePin(entry.id);
     });
     
-    // Clicking on icon directly COPIES value
     iconWrap.addEventListener('click', (e) => {
       e.stopPropagation();
       triggerCopyVisual(card, entry.value, entry.name);
     });
     
-    // Clicking card content handles single/double click
+    // 1 clique copia o valor, clique duplo abre a URL vinculada
     contentWrap.addEventListener('click', (e) => {
       e.stopPropagation();
       if (clickTimer === null) {
@@ -324,31 +319,27 @@ function render() {
         if (entry.url) {
           openUrl(entry.url);
         } else {
-          // If no link, copy instead
           triggerCopyVisual(card, entry.value, entry.name);
         }
       }
     });
     
-    // Edit entry
     editBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       openModal(entry.id);
     });
     
-    // Double tap confirm delete logic
-    deleteBtn.addEventListener('click', (e) => {
+    // Confirmação de exclusão em dois cliques para segurança
+    deleteBtn.addEventListener('click', (e) =>>,StartLine:294,TargetContent: {
       e.stopPropagation();
       
       const id = entry.id;
       if (deleteTimeouts[id]) {
-        // Confirmed delete
         clearTimeout(deleteTimeouts[id]);
         delete deleteTimeouts[id];
         deleteEntry(id);
       } else {
-        // First click: arm confirmation
-        // Clear any other armed buttons first
+        // Desarma outros botões de exclusão ativos
         document.querySelectorAll('.btn-delete.confirm').forEach(btn => {
           btn.classList.remove('confirm');
           btn.innerHTML = SVG_TRASH;
@@ -502,7 +493,7 @@ function importData(e) {
   importFile.value = '';
 }
 
-// Preset Picker Construction
+// Inicializa a grade de ícones predefinidos
 function initPresetGrid() {
   presetGrid.innerHTML = '';
   Object.keys(SVG_ICONS).forEach(key => {
@@ -538,13 +529,11 @@ function updatePreview() {
   }
 }
 
-// Modal Toggle
 function openModal(id = null) {
   editingId = id;
   iconPickerPanel.classList.remove('active');
   
   if (id) {
-    // Edit Mode
     modalTitle.innerText = 'Editar entrada';
     const entry = entries.find(e => e.id === id);
     if (entry) {
@@ -557,7 +546,6 @@ function openModal(id = null) {
       emojiInput.value = selectedIcon.type === 'emoji' ? selectedIcon.value : '';
     }
   } else {
-    // Add Mode
     modalTitle.innerText = 'Nova entrada';
     fieldName.value = '';
     fieldValue.value = '';
@@ -592,7 +580,7 @@ function closeModal() {
   editingId = null;
 }
 
-// Colors dot selector visual match
+// Destaca a cor ativa nos presets de cor
 function updateColorDotSelection() {
   const currentColor = fieldColor.value.toLowerCase();
   colorDots.forEach(dot => {
@@ -605,7 +593,7 @@ function updateColorDotSelection() {
   });
 }
 
-// Save Entry
+// Cria ou edita uma entrada no armazenamento local
 function saveEntry() {
   const name = fieldName.value.trim();
   const value = fieldValue.value.trim();
@@ -621,7 +609,6 @@ function saveEntry() {
   const iconData = { ...selectedIcon };
   
   if (editingId) {
-    // Edit existing
     entries = entries.map(entry => {
       if (entry.id === editingId) {
         return { ...entry, name, value, url, tag, color, icon: iconData };
@@ -629,7 +616,6 @@ function saveEntry() {
       return entry;
     });
   } else {
-    // Create new
     const newEntry = {
       id: Date.now().toString(),
       name,
@@ -651,11 +637,11 @@ function saveEntry() {
   });
 }
 
-// Listeners & Bindings
+// Inicialização e vinculação de eventos
 function init() {
   initPresetGrid();
   
-  // Load storage
+  // Carrega os dados salvos do usuário
   storage.get('entries', (savedEntries) => {
     if (savedEntries && Array.isArray(savedEntries)) {
       entries = savedEntries;
@@ -667,21 +653,18 @@ function init() {
     render();
   });
   
-  // Search
   searchInput.addEventListener('input', render);
   
-  // Open Add Modal
   btnAdd.addEventListener('click', () => openModal());
   btnAddEmpty.addEventListener('click', () => openModal());
   
-  // Close Add Modal
   btnClose.addEventListener('click', closeModal);
   btnCancel.addEventListener('click', closeModal);
   modalOverlay.addEventListener('click', (e) => {
     if (e.target === modalOverlay) closeModal();
   });
   
-  // Settings Modal Events
+  // Eventos do modal de Configurações e Backup
   btnSettings.addEventListener('click', openSettingsModal);
   btnSettingsClose.addEventListener('click', closeSettingsModal);
   settingsModalOverlay.addEventListener('click', (e) => {
@@ -691,10 +674,8 @@ function init() {
   btnExport.addEventListener('click', exportData);
   importFile.addEventListener('change', importData);
   
-  // Save Entry
   btnSave.addEventListener('click', saveEntry);
   
-  // Show / Toggle icon picker
   iconPreviewBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     iconPickerPanel.classList.toggle('active');
@@ -706,7 +687,7 @@ function init() {
     }
   });
   
-  // Custom Emoji Input
+  // Seletor de Emoji personalizado
   emojiInput.addEventListener('input', () => {
     const val = emojiInput.value.trim();
     if (val) {
@@ -714,7 +695,7 @@ function init() {
       selectedIcon = { type: 'emoji', value: val };
       updatePreview();
     } else {
-      // Revert to link default if empty
+      // Se apagar, volta para o ícone padrão de link
       selectedIcon = { type: 'preset', value: 'link' };
       const defaultPreset = document.querySelector('.preset-btn[data-preset="link"]');
       if (defaultPreset) defaultPreset.classList.add('active');
@@ -722,7 +703,7 @@ function init() {
     }
   });
   
-  // Custom Image Upload
+  // Upload de Imagem personalizada
   imageUpload.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -746,7 +727,7 @@ function init() {
     });
   });
 
-  // Auto-favicon detection when user types a URL
+  // Detecção e preenchimento automático de favicon ao digitar URL
   fieldUrl.addEventListener('input', () => {
     const urlVal = fieldUrl.value.trim();
     const domain = getDomain(urlVal);
@@ -766,7 +747,7 @@ function init() {
     }
   });
   
-  // Prevent form submission on Enter
+  // Salva a entrada ao pressionar Enter nos campos de texto
   const inputs = [fieldName, fieldValue, fieldUrl, fieldTag];
   inputs.forEach(input => {
     input.addEventListener('keydown', (e) => {
@@ -778,5 +759,4 @@ function init() {
   });
 }
 
-// Run init on DOM loaded
 document.addEventListener('DOMContentLoaded', init);
