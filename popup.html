@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>InfoVault</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="app">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-top">
+        <div class="logo">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>InfoVault</span>
+        </div>
+        <button class="btn-add" id="btnAdd" title="Nova entrada">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="search-wrap">
+        <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none">
+          <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+          <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <input type="text" id="search" placeholder="Buscar entradas…" class="search-input" autocomplete="off">
+      </div>
+    </header>
+
+    <!-- Cards list -->
+    <main class="cards-list" id="cardsList"></main>
+
+    <!-- Empty state -->
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+          <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M8 8h8M8 12h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="18" cy="18" r="5" fill="var(--accent)" stroke="var(--bg-base)"/>
+          <path d="M18 15.5v5M15.5 18h5" stroke="var(--bg-base)" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <p class="empty-title">Nenhuma entrada ainda</p>
+      <p class="empty-sub">Adicione CPF, LinkedIn, GitHub e o que mais usar no dia a dia.</p>
+      <button class="btn-empty-cta" id="btnAddEmpty">Adicionar primeira entrada</button>
+    </div>
+
+    <!-- No results state -->
+    <div class="no-results" id="noResults" style="display:none">
+      <p>Nenhum resultado para "<span id="searchTerm"></span>"</p>
+    </div>
+
+  </div>
+
+  <!-- Modal overlay -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+
+      <div class="modal-header">
+        <h2 id="modalTitle">Nova entrada</h2>
+        <button class="btn-close" id="btnClose" title="Fechar">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+
+        <!-- Icon picker -->
+        <div class="field">
+          <label class="field-label">Ícone</label>
+          <div class="icon-picker-wrap">
+            <button class="icon-preview-btn" id="iconPreviewBtn" title="Clique para escolher ícone">
+              <span id="iconPreview">?</span>
+            </button>
+            <div class="icon-picker-panel" id="iconPickerPanel">
+              <div class="picker-section-label">Predefinidos</div>
+              <div class="preset-grid" id="presetGrid"></div>
+              <div class="picker-section-label" style="margin-top:10px">Personalizado</div>
+              <div class="custom-icon-row">
+                <input type="text" id="emojiInput" class="emoji-input" placeholder="Emoji (🔑, 📱…)" maxlength="4">
+                <label class="btn-upload-img" title="Enviar imagem">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  Imagem
+                  <input type="file" id="imageUpload" accept="image/*" style="display:none">
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="fieldName">Nome <span class="req">*</span></label>
+          <input type="text" id="fieldName" class="field-input" placeholder="ex: CPF, LinkedIn, Senha Wi-Fi…" autocomplete="off">
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="fieldValue">Valor <span class="req">*</span></label>
+          <input type="text" id="fieldValue" class="field-input" placeholder="ex: 000.000.000-00" autocomplete="off">
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="fieldUrl">
+            URL
+            <span class="optional">— opcional, abre no duplo clique</span>
+          </label>
+          <input type="url" id="fieldUrl" class="field-input" placeholder="https://…" autocomplete="off">
+        </div>
+
+        <div class="field field-row">
+          <div class="field" style="flex:1;margin-bottom:0">
+            <label class="field-label" for="fieldColor">Cor do acento</label>
+            <div class="color-row">
+              <input type="color" id="fieldColor" class="color-input" value="#6C63FF">
+              <span class="color-presets">
+                <button class="color-dot" style="background:#6C63FF" data-color="#6C63FF" title="Violeta"></button>
+                <button class="color-dot" style="background:#0A66C2" data-color="#0A66C2" title="LinkedIn"></button>
+                <button class="color-dot" style="background:#2ea44f" data-color="#2ea44f" title="GitHub"></button>
+                <button class="color-dot" style="background:#25D366" data-color="#25D366" title="WhatsApp"></button>
+                <button class="color-dot" style="background:#EA4335" data-color="#EA4335" title="Google"></button>
+                <button class="color-dot" style="background:#F59E0B" data-color="#F59E0B" title="Âmbar"></button>
+              </span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary" id="btnCancel">Cancelar</button>
+        <button class="btn-primary" id="btnSave">Salvar</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
