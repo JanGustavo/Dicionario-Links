@@ -1,5 +1,7 @@
 # InfoVault 🔑
 
+[📥 **Baixar Versão Recente (ZIP)**](https://github.com/JanGustavo/Dicionario-Links/releases/latest/download/infovault-extension.zip)
+
 **InfoVault** é uma extensão de navegador leve, elegante e extremamente prática, desenvolvida para funcionar como seu cofre e dicionário pessoal de informações. Guarde links rápidos, CPFs, e-mails, chaves Pix, logins ou qualquer informação recorrente e acesse-os com um clique.
 
 ---
